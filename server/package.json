@@ -38,3 +38,7 @@
     "vitest": "^3.0.0"
   }
 }
+
+
+// RepoLens Security Remediation:
+// "vitest": "^3.2.8"
