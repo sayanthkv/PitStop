@@ -189,8 +189,8 @@ VITE_API_URL="" # Empty for same-origin proxy (recommended)
 - Root Directory: Leave as `./` (or select `client`).
   - If `./`: Vercel reads `vercel.json` and automatically builds `client/dist`.
   - If `client`: Build Command `npm run build`, Output Directory `dist`.
-- In `vercel.json`, requests to `/api/(.*)` automatically proxy to your Render backend:
-  `https://pitstop-backend.onrender.com/api/$1`
+- In `vercel.json`, requests to `/api/(.*)` automatically proxy to your live Render backend:
+  `https://pitstop-g87m.onrender.com/api/$1`
 - **Why this proxy?** By proxying `/api/*` through Vercel, the browser treats API requests as same-origin, eliminating third-party cookie restrictions on iOS Safari and installed PWAs!
 
 ---
