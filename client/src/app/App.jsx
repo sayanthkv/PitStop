@@ -27,6 +27,11 @@ import { ServicePage } from '../features/service/ServicePage.jsx';
 import { DocumentsPage } from '../features/documents/DocumentsPage.jsx';
 import { SettingsPage } from '../features/settings/SettingsPage.jsx';
 
+// Advanced Cockpit & AI Scanner Views
+import { CockpitPage } from '../features/cockpit/CockpitPage.jsx';
+import { ScannerPage } from '../features/scanner/ScannerPage.jsx';
+import { MaintenancePage } from '../features/maintenance/MaintenancePage.jsx';
+
 // Code-split / lazy loaded views
 const LiveRideTracker = lazy(() =>
   import('../features/rides/LiveRideTracker.jsx').then((m) => ({ default: m.LiveRideTracker }))
@@ -56,7 +61,7 @@ function MainApp() {
   const { vehicle, isLoading: isVehicleLoading, refetch: refetchVehicle } = useVehicle();
 
   const [authView, setAuthView] = useState('login'); // 'login' | 'register'
-  const [currentTab, setCurrentTab] = useState('home'); // 'home' | 'odometer' | 'fuel' | 'rides' | 'rides/live' | 'rides/detail' | 'parking' | 'service' | 'documents' | 'bluetooth' | 'settings' | 'menu'
+  const [currentTab, setCurrentTab] = useState('home'); // 'home' | 'cockpit' | 'scanner' | 'maintenance' | 'odometer' | 'fuel' | 'rides' | 'rides/live' | 'rides/detail' | 'parking' | 'service' | 'documents' | 'bluetooth' | 'settings' | 'menu'
   const [selectedRideId, setSelectedRideId] = useState(null);
   const [isQuickActionOpen, setIsQuickActionOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
@@ -91,6 +96,15 @@ function MainApp() {
   // 4. Quick action routing
   const handleQuickAction = (actionId) => {
     switch (actionId) {
+      case 'cockpit':
+        setCurrentTab('cockpit');
+        break;
+      case 'scanner':
+        setCurrentTab('scanner');
+        break;
+      case 'maintenance':
+        setCurrentTab('maintenance');
+        break;
       case 'ride':
         setCurrentTab('rides/live');
         break;
@@ -108,12 +122,12 @@ function MainApp() {
     }
   };
 
-  const isLiveRideView = currentTab === 'rides/live';
+  const isFullScreenView = currentTab === 'rides/live' || currentTab === 'cockpit';
 
   return (
     <div className="min-h-screen bg-carbon-950 text-zinc-100 flex flex-col font-sans selection:bg-amber-500/30">
-      {/* Hide Header & BottomNav during Live High-Contrast Ride Mode */}
-      {!isLiveRideView && (
+      {/* Hide Header & BottomNav during Live High-Contrast Ride Mode or Cockpit HUD */}
+      {!isFullScreenView && (
         <>
           <Header
             vehicle={vehicle}
@@ -133,6 +147,18 @@ function MainApp() {
               onNavigate={(tab) => setCurrentTab(tab)}
               onQuickAdd={() => setIsQuickActionOpen(true)}
             />
+          )}
+
+          {currentTab === 'cockpit' && (
+            <CockpitPage onExit={() => setCurrentTab('home')} />
+          )}
+
+          {currentTab === 'scanner' && (
+            <ScannerPage onNavigate={(tab) => setCurrentTab(tab)} />
+          )}
+
+          {currentTab === 'maintenance' && (
+            <MaintenancePage onNavigate={(tab) => setCurrentTab(tab)} />
           )}
 
           {currentTab === 'odometer' && <OdometerPage vehicle={vehicle} />}
@@ -194,7 +220,7 @@ function MainApp() {
       />
 
       {/* Mobile-First Bottom Nav Bar */}
-      {!isLiveRideView && (
+      {!isFullScreenView && (
         <BottomNav
           currentTab={currentTab}
           setTab={setCurrentTab}

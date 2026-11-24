@@ -1,28 +1,35 @@
-import { Navigation, MapPin, Gauge, Fuel } from 'lucide-react';
+import { Zap, Camera, Navigation, MapPin, Fuel, Wrench } from 'lucide-react';
 import { BottomSheet } from './BottomSheet.jsx';
 
 export function QuickActionModal({ isOpen, onClose, onSelectAction }) {
   const actions = [
     {
-      id: 'ride',
-      title: 'Start Ride',
-      description: 'Live high-accuracy GPS tracking & cockpit mode',
-      icon: Navigation,
+      id: 'cockpit',
+      title: 'Cockpit HUD & 0-60 Sprint',
+      description: 'Handlebar phone mount mode with live lean angle',
+      icon: Zap,
       color: 'from-amber-500 to-amber-600',
     },
     {
-      id: 'park',
-      title: 'Park Here',
-      description: 'Save parking spot with GPS & compass navigation',
-      icon: MapPin,
-      color: 'from-cyan-500 to-cyan-600',
+      id: 'scanner',
+      title: 'AI Camera Scanner',
+      description: 'Auto-scan odometer digits & fuel dispenser bill',
+      icon: Camera,
+      color: 'from-indigo-500 to-indigo-600',
     },
     {
-      id: 'odometer',
-      title: 'Update Odometer',
-      description: 'Quick numeric keypad reading entry',
-      icon: Gauge,
+      id: 'maintenance',
+      title: 'TVS NTORQ OEM Health',
+      description: 'Check component wear & DIY maintenance guides',
+      icon: Wrench,
       color: 'from-emerald-500 to-emerald-600',
+    },
+    {
+      id: 'ride',
+      title: 'Start GPS Ride',
+      description: 'Live high-accuracy GPS tracking & route map',
+      icon: Navigation,
+      color: 'from-cyan-500 to-cyan-600',
     },
     {
       id: 'fuel',
@@ -31,11 +38,18 @@ export function QuickActionModal({ isOpen, onClose, onSelectAction }) {
       icon: Fuel,
       color: 'from-rose-500 to-rose-600',
     },
+    {
+      id: 'park',
+      title: 'Park Here',
+      description: 'Save parking spot with GPS & compass navigation',
+      icon: MapPin,
+      color: 'from-purple-500 to-purple-600',
+    },
   ];
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title="Cockpit Quick Actions">
-      <div className="grid grid-cols-1 gap-2.5">
+      <div className="grid grid-cols-1 gap-2.5 pb-2">
         {actions.map((act) => {
           const Icon = act.icon;
           return (

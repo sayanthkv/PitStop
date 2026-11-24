@@ -114,7 +114,7 @@ ntorq/
 ```ini
 NODE_ENV=development
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/ntorq-companion
+MONGODB_URI=
 JWT_SECRET=super_secret_jwt_key_at_least_32_characters
 JWT_EXPIRES_IN=30d
 ALLOW_REGISTRATION=false
@@ -179,7 +179,7 @@ VITE_API_URL="" # Empty for same-origin proxy (recommended)
   - Name: `pitstop-backend` (produces `https://pitstop-backend.onrender.com`)
   - Set Environment Variables:
     - `NODE_ENV=production`
-    - `MONGODB_URI=mongodb+srv://sayanthsajeev721_db_user:tNcWZx7jiGnGRn7q@hirezone.yaaz0l3.mongodb.net/PitStop?retryWrites=true&w=majority`
+    - `MONGODB_URI=
     - `JWT_SECRET=<your-random-32-char-secret>`
     - `ALLOW_REGISTRATION=false`
     - `CORS_ORIGIN=https://<your-vercel-domain>.vercel.app`

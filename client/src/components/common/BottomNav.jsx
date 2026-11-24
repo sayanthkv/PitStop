@@ -1,11 +1,11 @@
-import { Home, Gauge, Fuel, Menu, Plus } from 'lucide-react';
+import { Home, Zap, Camera, Menu, Plus } from 'lucide-react';
 
 export function BottomNav({ currentTab, setTab, onQuickAdd }) {
   const tabs = [
     { id: 'home', label: 'Cluster', icon: Home },
-    { id: 'odometer', label: 'Odometer', icon: Gauge },
+    { id: 'cockpit', label: 'Cockpit', icon: Zap },
     { id: 'quick_add', isAction: true },
-    { id: 'fuel', label: 'Fuel', icon: Fuel },
+    { id: 'scanner', label: 'AI Scan', icon: Camera },
     { id: 'menu', label: 'Menu', icon: Menu },
   ];
 

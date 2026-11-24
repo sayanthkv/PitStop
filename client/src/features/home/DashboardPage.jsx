@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import {
   Navigation,
   MapPin,
-  Gauge,
   Fuel,
   Wrench,
   FileText,
@@ -11,6 +10,7 @@ import {
   ChevronRight,
   TrendingUp,
   Zap,
+  Camera,
 } from 'lucide-react';
 import { api } from '../../lib/api.js';
 import { ClusterGauge } from '../../components/common/ClusterGauge.jsx';
@@ -55,8 +55,8 @@ export function DashboardPage({ vehicle, onNavigate }) {
     staleTime: 30000,
   });
 
-  const currentOdo = odoStats?.currentOdometer ?? vehicle?.currentOdometer ?? 0;
-  const fuelPercentage = fuelEst?.percentage ?? 65;
+  const currentOdo = vehicle?.currentOdometer || 0;
+  const fuelPercentage = fuelEst?.fuelPercentage ?? 65;
   const fuelLitres = fuelEst?.estimatedLitres ?? 3.8;
   const rangeKm = fuelEst?.rangeKm ?? 145;
   const overallMileage = fuelEst?.averageMileage ?? 38;
@@ -100,7 +100,6 @@ export function DashboardPage({ vehicle, onNavigate }) {
 
       {/* Hero Cockpit Section: Large Animated Odometer */}
       <div className="bg-gradient-to-b from-carbon-900 via-carbon-900 to-carbon-950 border border-carbon-800 rounded-2xl p-5 relative overflow-hidden shadow-xl">
-        {/* Subtle carbon texture lines */}
         <div className="absolute inset-0 bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:16px_16px] opacity-20 pointer-events-none" />
 
         <div className="flex items-center justify-between mb-3 relative z-10">
@@ -113,40 +112,28 @@ export function DashboardPage({ vehicle, onNavigate }) {
           </span>
         </div>
 
-        {/* Large Odometer Display with count-up animation */}
+        {/* Large Odometer Display */}
         <div className="my-4 text-center relative z-10">
           <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-400 block mb-1">
             Total Distance Traveled
           </span>
-          <div className="inline-flex items-baseline justify-center gap-2">
-            <motion.h2
-              key={currentOdo}
-              initial={{ scale: 0.95, opacity: 0.8 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="font-mono text-4xl sm:text-5xl font-extrabold tracking-tight text-zinc-100 tabular-nums drop-shadow-sm"
-            >
-              {currentOdo.toLocaleString('en-IN')}
-            </motion.h2>
-            <span className="font-mono text-base font-semibold text-amber-500 uppercase">
-              KM
+          <div className="flex items-baseline justify-center gap-1">
+            <span className="font-mono font-black text-6xl text-zinc-100 tracking-wider">
+              {formatKm(currentOdo)}
             </span>
+            <span className="font-display font-black text-xl text-amber-500">KM</span>
           </div>
 
-          <div className="flex items-center justify-center gap-4 mt-3 text-xs font-mono text-zinc-400">
-            <span>
-              Week: <strong className="text-zinc-200">{formatKm(odoStats?.kmThisWeek ?? 0)}</strong>
-            </span>
-            <span className="text-carbon-700">|</span>
-            <span>
-              Month: <strong className="text-zinc-200">{formatKm(odoStats?.kmThisMonth ?? 0)}</strong>
-            </span>
+          <div className="flex items-center justify-center gap-4 mt-2 text-xs font-mono text-zinc-400">
+            <span>This week: <strong className="text-zinc-200">+{odoStats?.weekKm ?? 0} km</strong></span>
+            <span>•</span>
+            <span>This month: <strong className="text-zinc-200">+{odoStats?.monthKm ?? 0} km</strong></span>
           </div>
         </div>
 
-        {/* Hero Gauge & Fuel Summary */}
-        <div className="mt-5 pt-4 border-t border-carbon-800/80 flex items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-3">
+        {/* Fuel & Range Sub-Panel */}
+        <div className="bg-carbon-950/70 border border-carbon-800/80 rounded-xl p-3.5 flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-3.5">
             <ClusterGauge
               value={fuelPercentage}
               size={88}
@@ -182,44 +169,70 @@ export function DashboardPage({ vehicle, onNavigate }) {
       {/* Quick Action Ribbon */}
       <div className="grid grid-cols-4 gap-2">
         <button
-          onClick={() => onNavigate('rides/live')}
-          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-amber-500/50 active:scale-95 transition"
+          onClick={() => onNavigate('cockpit')}
+          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-amber-500/50 active:scale-95 transition group"
         >
-          <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-1.5">
+          <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+            <Zap className="w-4 h-4 fill-amber-400" />
+          </div>
+          <span className="text-[11px] font-medium font-sans text-zinc-200">Cockpit HUD</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('scanner')}
+          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-indigo-500/50 active:scale-95 transition group"
+        >
+          <div className="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+            <Camera className="w-4 h-4" />
+          </div>
+          <span className="text-[11px] font-medium font-sans text-zinc-200">AI Scan</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate('rides/live')}
+          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-cyan-500/50 active:scale-95 transition group"
+        >
+          <div className="w-9 h-9 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
             <Navigation className="w-4 h-4" />
           </div>
           <span className="text-[11px] font-medium font-sans text-zinc-200">Start Ride</span>
         </button>
 
         <button
-          onClick={() => onNavigate('parking')}
-          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-cyan-500/50 active:scale-95 transition"
-        >
-          <div className="w-9 h-9 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-1.5">
-            <MapPin className="w-4 h-4" />
-          </div>
-          <span className="text-[11px] font-medium font-sans text-zinc-200">Park Here</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('odometer')}
-          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-emerald-500/50 active:scale-95 transition"
-        >
-          <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-1.5">
-            <Gauge className="w-4 h-4" />
-          </div>
-          <span className="text-[11px] font-medium font-sans text-zinc-200">Update Odo</span>
-        </button>
-
-        <button
           onClick={() => onNavigate('fuel')}
-          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-rose-500/50 active:scale-95 transition"
+          className="flex flex-col items-center justify-center p-3 rounded-xl bg-carbon-900 border border-carbon-800 hover:border-rose-500/50 active:scale-95 transition group"
         >
-          <div className="w-9 h-9 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center mb-1.5">
+          <div className="w-9 h-9 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
             <Fuel className="w-4 h-4" />
           </div>
           <span className="text-[11px] font-medium font-sans text-zinc-200">Log Fuel</span>
         </button>
+      </div>
+
+      {/* OEM Maintenance Health Banner */}
+      <div
+        onClick={() => onNavigate('maintenance')}
+        className="bg-gradient-to-r from-carbon-900 via-carbon-900 to-carbon-900/90 border border-carbon-800 hover:border-emerald-500/40 rounded-2xl p-3.5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition shadow-md group"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+            <Wrench className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-display font-bold text-xs text-zinc-100 group-hover:text-amber-400 transition truncate">
+                TVS NTORQ OEM Health Index
+              </span>
+              <span className="text-[9px] font-mono font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                94% OK
+              </span>
+            </div>
+            <p className="text-[10px] text-zinc-400 font-sans truncate">
+              TRU4 Synthetic 10W-30 Specs, CVT belt & DIY guides
+            </p>
+          </div>
+        </div>
+        <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 transition-transform group-hover:translate-x-0.5 shrink-0 ml-2" />
       </div>
 
       {/* Grid of Key Telemetry Cards */}
@@ -249,7 +262,7 @@ export function DashboardPage({ vehicle, onNavigate }) {
           icon={Wrench}
           subtext={serviceDue?.daysRemainingDate !== null ? `~${serviceDue?.daysRemainingDate} days left` : 'On schedule'}
           alertState={serviceDue?.status === 'overdue' ? 'critical' : serviceDue?.status === 'warning' ? 'warning' : null}
-          onClick={() => onNavigate('service')}
+          onClick={() => onNavigate('maintenance')}
         />
 
         <StatCard
